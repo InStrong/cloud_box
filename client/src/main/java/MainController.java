@@ -1,4 +1,6 @@
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;;
@@ -6,7 +8,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
@@ -24,7 +25,7 @@ public class MainController implements Initializable {
                     AbstractMessage am = Network.readObject();
                     if (am instanceof FileListRequest) {
                         FileListRequest flr = (FileListRequest) am;
-                        refreshLocalFilesList();
+                        refreshServerFilesList();
 
                     }
                 }
@@ -36,7 +37,7 @@ public class MainController implements Initializable {
         });
         t.setDaemon(true);
         t.start();
-        refreshLocalFilesList();
+        refreshServerFilesList();
 
     }
     @FXML
@@ -46,11 +47,14 @@ public class MainController implements Initializable {
         );
     }
     @FXML
-    private void refreshLocalFilesList() {
+    private void refreshServerFilesList() {
         if (Platform.isFxApplicationThread()){
             try {
+                filesList.setEditable(true);
                 filesList.getItems().clear();
-                Files.list(Paths.get("local_storage")).map(p -> p.getFileName().toString()).forEach(o -> filesList.getItems());
+                ObservableList<String> list = FXCollections.observableArrayList();
+                Files.list(Paths.get("local_storage")).map(p -> p.getFileName().toString()).forEach(o -> list.add(o));
+                filesList.setItems(list);
             } catch (IOException e) {
                 e.printStackTrace();
             }
