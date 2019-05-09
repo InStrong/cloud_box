@@ -12,12 +12,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainHandler extends ChannelInboundHandlerAdapter {
-
+    private SQLHandler sqlHandler = new SQLHandler();
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         try {
             if (msg==null){
                 return;
+            }
+            if (msg instanceof AuthMessage){
+                AuthMessage am = new AuthMessage(((AuthMessage) msg).login,((AuthMessage) msg).password);
+                if (sqlHandler.isAuthPassed(am.login, am.password)){
+                    am.setAuthPassed(true);ctx.writeAndFlush(am);
+                }
+                
+                else {
+                    am.setAuthPassed(false);
+                    ctx.writeAndFlush(am);
+                }
             }
             if (msg instanceof FileListRequest){
                 FileListMessage flm = new FileListMessage(getFilesList());

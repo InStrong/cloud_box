@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<GridPane fx:id="rootNode" alignment="CENTER" hgap="10" prefHeight="600.0" prefWidth="800.0" stylesheets="@styles.css"
+          vgap="10" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="MainController">
+    <VBox>
+        <TextField fx:id="loginArea" editable="true" promptText="Login">
+
+        </TextField>
+        <PasswordField fx:id="passArea" promptText="Password">
+            <VBox.margin>
+                <Insets bottom="10.0"/>
+            </VBox.margin>
+        </PasswordField>
+        <VBox>
+            <children>
+                <Button fx:id="loginBtn" maxWidth="Infinity" text="Login" HBox.hgrow="ALWAYS" />
+            </children>
+            <children>
+                <Button fx:id="regBtn" text="Registration" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+            </children>
+        </VBox>
+    </VBox>
+    <columnConstraints>
+        <ColumnConstraints/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints/>
+    </rowConstraints>
+
+
+</GridPane>

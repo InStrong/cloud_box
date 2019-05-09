@@ -50,6 +50,12 @@ public class MainController extends Window implements Initializable {
                         downloadFile(fm);
                         refreshLocalFiles();
                     }
+                    if (am instanceof AuthMessage) {                //проверка прохождения авторизации
+                        AuthMessage aum = (AuthMessage) am;
+                        if (aum.isAuthPassed){
+
+                        }
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();

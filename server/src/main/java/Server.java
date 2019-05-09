@@ -13,10 +13,12 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
 
 public class Server {
 
+    private SQLHandler sqlhandler = new SQLHandler();
+
     private void run() throws Exception{
         final int maxObjectSize = 1024*1024*100;
         final int connectionPort = 8189;
-
+        sqlhandler.connect();
 
         EventLoopGroup mainGroup = new NioEventLoopGroup();
         EventLoopGroup worketGroup = new NioEventLoopGroup();
@@ -43,6 +45,7 @@ public class Server {
         } finally {
             mainGroup.shutdownGracefully();
             worketGroup.shutdownGracefully();
+            sqlhandler.disconnect();
         }
 
 
