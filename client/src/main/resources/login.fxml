@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.geometry.Insets?>
-<GridPane fx:id="rootNode" alignment="CENTER" hgap="10" prefHeight="600.0" prefWidth="800.0" stylesheets="@styles.css"
+<GridPane fx:id="rootNode" alignment="CENTER" hgap="10" prefHeight="600.0" prefWidth="800.0" stylesheets="@Login.css"
           vgap="10" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
           fx:controller="MainController">
     <VBox>
@@ -21,10 +21,10 @@
         </PasswordField>
         <VBox>
             <children>
-                <Button fx:id="loginBtn" maxWidth="Infinity" text="Login" HBox.hgrow="ALWAYS" />
+                <Button fx:id="loginBtn" maxWidth="Infinity" text="Login" HBox.hgrow="ALWAYS" onAction="#authAction"/>
             </children>
             <children>
-                <Button fx:id="regBtn" text="Registration" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+                <Button fx:id="regBtn" text="Registration" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#regAction" />
             </children>
         </VBox>
     </VBox>

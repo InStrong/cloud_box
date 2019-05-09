@@ -3,11 +3,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ListView;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import sun.plugin2.message.Message;;
 import java.io.File;
@@ -24,16 +27,16 @@ public class MainController extends Window implements Initializable {
     private ListView<String> filesListRemote;
     @FXML
     private ListView<String> filesListLocal;
+    @FXML
+    TextField loginArea;
+    @FXML
+    PasswordField passArea;
+    @FXML
+    GridPane rootNode;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Network.start();
-        try {
-            refreshLocalFiles();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         Thread t = new Thread(() -> {
             try {
@@ -52,9 +55,28 @@ public class MainController extends Window implements Initializable {
                     }
                     if (am instanceof AuthMessage) {                //проверка прохождения авторизации
                         AuthMessage aum = (AuthMessage) am;
-                        if (aum.isAuthPassed){
+                        if (aum.isAuthPassed) {
+                            changeScene();
+                        } else {
+                            loginArea.clear();
+                            passArea.clear();
+                            if (Platform.isFxApplicationThread()) {
+                                Alert alert = new Alert(Alert.AlertType.ERROR, "", ButtonType.OK);
+                                alert.setContentText("Wrong login or password");
+                                alert.showAndWait();
+                            } else {
+                                Platform.runLater(() -> {
+                                    Alert alert = new Alert(Alert.AlertType.ERROR, "", ButtonType.OK);
+                                    alert.setContentText("Wrong login or password");
+                                    alert.showAndWait();
+                                });
 
+                            }
                         }
+                    }
+                    if (am instanceof RegistrationMessage) {                //проверка прохождения авторизации
+                        RegistrationMessage rm = (RegistrationMessage) am;
+
                     }
                 }
             } catch (IOException e) {
@@ -165,5 +187,38 @@ public class MainController extends Window implements Initializable {
 
     public void uploadButton(ActionEvent actionEvent) {
         Network.sendMsg(new FileMessage(Paths.get("local_storage/"+filesListLocal.getSelectionModel().getSelectedItem())));
+    }
+
+    public void authAction(ActionEvent actionEvent) {
+        Network.sendMsg(new AuthMessage(loginArea.getText(),Encrypter.encrypt(passArea.getText())));
+    }
+
+
+    public void changeScene(){
+        if (!Platform.isFxApplicationThread()){
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    changeScreen();
+                }
+            });
+        } else {
+            changeScreen();
+        }
+    }
+
+    private void changeScreen() {
+        Parent mainScene = null;
+        try {
+            mainScene = FXMLLoader.load(getClass().getResource("/main.fxml"));
+            ((Stage) rootNode.getScene().getWindow()).setScene(new Scene(mainScene));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void regAction(ActionEvent actionEvent) {
+        Network.sendMsg(new RegistrationMessage(loginArea.getText(),Encrypter.encrypt(passArea.getText())));
     }
 }

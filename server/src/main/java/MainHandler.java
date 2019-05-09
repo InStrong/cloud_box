@@ -16,6 +16,7 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         try {
+            sqlHandler.connect();
             if (msg==null){
                 return;
             }
@@ -24,7 +25,7 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                 if (sqlHandler.isAuthPassed(am.login, am.password)){
                     am.setAuthPassed(true);ctx.writeAndFlush(am);
                 }
-                
+
                 else {
                     am.setAuthPassed(false);
                     ctx.writeAndFlush(am);
@@ -34,6 +35,13 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                 FileListMessage flm = new FileListMessage(getFilesList());
                 ctx.writeAndFlush(flm);
             }
+
+            if (msg instanceof RegistrationMessage){
+                RegistrationMessage rm = new RegistrationMessage(((RegistrationMessage) msg).getLogin(),((RegistrationMessage) msg).getPassword());
+                sqlHandler.registerUser(rm.getLogin(),rm.getPassword());
+                ctx.writeAndFlush(rm);
+            }
+
 
             if (msg instanceof FileRequest){
                 FileRequest fr = (FileRequest) msg;
@@ -65,6 +73,7 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
 
         }finally {
             ReferenceCountUtil.release(msg);
+            sqlHandler.disconnect();
         }
     }
 

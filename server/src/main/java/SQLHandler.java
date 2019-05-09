@@ -47,4 +47,13 @@ public class SQLHandler {
 
         return false;
     }
+
+    public void registerUser(String login,String password){
+        String query = "REPLACE INTO Users (login,password) VALUES ('"+login+"','"+password+"')";
+        try {
+            stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
