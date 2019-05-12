@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <GridPane fx:id="rootNode" alignment="CENTER" hgap="10" prefHeight="600.0" prefWidth="800.0" stylesheets="@Login.css"
           vgap="10" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
           fx:controller="MainController">
     <VBox>
-        <TextField fx:id="loginArea" editable="true" promptText="Login">
+        <ImageView fitWidth="420" fitHeight="200">
+            <VBox.margin>
+                <Insets bottom="10.0"/>
+            </VBox.margin>
+            <Image url="@logo.png"/>
+        </ImageView>
+
+        <TextField fx:id="loginArea" promptText="Login">
+            <VBox.margin>
+                <Insets bottom="5.0"/>
+            </VBox.margin>
 
         </TextField>
         <PasswordField fx:id="passArea" promptText="Password">
@@ -20,20 +28,9 @@
             </VBox.margin>
         </PasswordField>
         <VBox>
-            <children>
-                <Button fx:id="loginBtn" maxWidth="Infinity" text="Login" HBox.hgrow="ALWAYS" onAction="#authAction"/>
-            </children>
-            <children>
-                <Button fx:id="regBtn" text="Registration" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#regAction" />
-            </children>
+            <Button fx:id="loginBtn" maxWidth="Infinity" text="Login" HBox.hgrow="ALWAYS" onAction="#authAction"/>
+            <Button fx:id="regBtn" text="Registration" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                    onAction="#regWindow"/>
         </VBox>
     </VBox>
-    <columnConstraints>
-        <ColumnConstraints/>
-    </columnConstraints>
-    <rowConstraints>
-        <RowConstraints/>
-    </rowConstraints>
-
-
 </GridPane>

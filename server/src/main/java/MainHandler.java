@@ -38,8 +38,16 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
 
             if (msg instanceof RegistrationMessage){
                 RegistrationMessage rm = new RegistrationMessage(((RegistrationMessage) msg).getLogin(),((RegistrationMessage) msg).getPassword());
-                sqlHandler.registerUser(rm.getLogin(),rm.getPassword());
-                ctx.writeAndFlush(rm);
+                if (!sqlHandler.isLoginUsed(rm.getLogin())) {
+                    sqlHandler.registerUser(rm.getLogin(), rm.getPassword());
+                    rm.setRegistrationPassed(true);
+                    ctx.writeAndFlush(rm);
+                }
+                else {
+                    rm.setRegistrationPassed(false);
+                    ctx.writeAndFlush(rm);
+                }
+
             }
 
 
