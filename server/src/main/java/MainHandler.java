@@ -12,17 +12,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainHandler extends ChannelInboundHandlerAdapter {
-
+    private SQLHandler sqlHandler = new SQLHandler();
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         try {
+            sqlHandler.connect();
             if (msg==null){
                 return;
+            }
+            if (msg instanceof AuthMessage){
+                AuthMessage am = new AuthMessage(((AuthMessage) msg).login,((AuthMessage) msg).password);
+                if (sqlHandler.isAuthPassed(am.login, am.password)){
+                    am.setAuthPassed(true);ctx.writeAndFlush(am);
+                }
+
+                else {
+                    am.setAuthPassed(false);
+                    ctx.writeAndFlush(am);
+                }
             }
             if (msg instanceof FileListRequest){
                 FileListMessage flm = new FileListMessage(getFilesList());
                 ctx.writeAndFlush(flm);
             }
+
+            if (msg instanceof RegistrationMessage){
+                RegistrationMessage rm = new RegistrationMessage(((RegistrationMessage) msg).getLogin(),((RegistrationMessage) msg).getPassword());
+                if (!sqlHandler.isLoginUsed(rm.getLogin())) {
+                    sqlHandler.registerUser(rm.getLogin(), rm.getPassword());
+                    rm.setRegistrationPassed(true);
+                    ctx.writeAndFlush(rm);
+                }
+                else {
+                    rm.setRegistrationPassed(false);
+                    ctx.writeAndFlush(rm);
+                }
+
+            }
+
 
             if (msg instanceof FileRequest){
                 FileRequest fr = (FileRequest) msg;
@@ -54,6 +81,7 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
 
         }finally {
             ReferenceCountUtil.release(msg);
+            sqlHandler.disconnect();
         }
     }
 

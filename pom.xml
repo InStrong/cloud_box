@@ -24,6 +24,19 @@
             <artifactId>netty-all</artifactId>
             <version>4.1.35.Final</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.16</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
+
 
 
     </dependencies>

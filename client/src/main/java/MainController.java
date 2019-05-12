@@ -3,14 +3,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ListView;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.stage.Window;
-import sun.plugin2.message.Message;;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -24,16 +25,22 @@ public class MainController extends Window implements Initializable {
     private ListView<String> filesListRemote;
     @FXML
     private ListView<String> filesListLocal;
+    @FXML
+    TextField loginArea;
+    @FXML
+    PasswordField passArea;
+    @FXML
+    GridPane rootNode;
+    @FXML
+    GridPane registration;
+    @FXML
+    TextField loginRegistration;
+    @FXML
+    PasswordField passRegistration;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Network.start();
-        try {
-            refreshLocalFiles();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         Thread t = new Thread(() -> {
             try {
@@ -50,10 +57,29 @@ public class MainController extends Window implements Initializable {
                         downloadFile(fm);
                         refreshLocalFiles();
                     }
+                    if (am instanceof AuthMessage) {                //проверка прохождения авторизации
+                        AuthMessage aum = (AuthMessage) am;
+                        if (aum.isAuthPassed) {
+                            changeScene("main",rootNode);
+                        } else {
+                            loginArea.clear();
+                            passArea.clear();
+                            sendAlert("Authorization failed","Wrong login or password", Alert.AlertType.ERROR);
+                        }
+                    }
+                    if (am instanceof RegistrationMessage) {                //проверка прохождения авторизации
+                        RegistrationMessage rm = (RegistrationMessage) am;
+                        if (rm.isRegistrationPassed()) {
+                           sendAlert("Registration is successful","Now you can login", Alert.AlertType.INFORMATION);
+                           changeScene("login",registration);
+                        }
+                        else {
+                           sendAlert("Registration failed","Login is already taken", Alert.AlertType.ERROR);
+                        }
+
+                    }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         });
@@ -122,13 +148,13 @@ public class MainController extends Window implements Initializable {
 
         if (Platform.isFxApplicationThread()) {
             filesListLocal.getItems().clear();
-            Files.list(Paths.get("local_storage")).map(p -> p.getFileName().toString()).forEach(o -> list.add(o));
+            Files.list(Paths.get("local_storage")).map(p -> p.getFileName().toString()).forEach(list::add);
             filesListLocal.setItems(list);
         } else {
             Platform.runLater(() -> {
                 filesListLocal.getItems().clear();
                 try {
-                    Files.list(Paths.get("local_storage")).map(p -> p.getFileName().toString()).forEach(o -> list.add(o));
+                    Files.list(Paths.get("local_storage")).map(p -> p.getFileName().toString()).forEach(list::add);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -159,5 +185,58 @@ public class MainController extends Window implements Initializable {
 
     public void uploadButton(ActionEvent actionEvent) {
         Network.sendMsg(new FileMessage(Paths.get("local_storage/"+filesListLocal.getSelectionModel().getSelectedItem())));
+    }
+
+    public void authAction(ActionEvent actionEvent) {
+        Network.sendMsg(new AuthMessage(loginArea.getText(),Encrypter.encrypt(passArea.getText())));
+    }
+
+
+    private void changeScene(String screen, GridPane gridPane){
+        if (!Platform.isFxApplicationThread()){
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    Parent mainScene;
+                    try {
+                        mainScene = FXMLLoader.load(getClass().getResource("/"+screen+".fxml"));
+                        ((Stage) gridPane.getScene().getWindow()).setScene(new Scene(mainScene));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } else {
+            Parent mainScene;
+            try {
+                mainScene = FXMLLoader.load(getClass().getResource("/"+screen+".fxml"));
+                ((Stage) gridPane.getScene().getWindow()).setScene(new Scene(mainScene));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    public void regWindow(ActionEvent actionEvent) {
+        changeScene("registration",rootNode);
+    }
+    public void regAction(ActionEvent actionEvent) {
+        Network.sendMsg(new RegistrationMessage(loginRegistration.getText(),Encrypter.encrypt(passRegistration.getText())));
+    }
+    private void sendAlert(String headerText, String contentText, Alert.AlertType type){
+        if (Platform.isFxApplicationThread()) {
+            Alert alert = new Alert(type, "", ButtonType.OK);
+            alert.setHeaderText(headerText);
+            alert.setContentText(contentText);
+            alert.showAndWait();
+        } else {
+            Platform.runLater(() -> {
+                Alert alert = new Alert(type, "", ButtonType.OK);
+                alert.setHeaderText(headerText);
+                alert.setContentText(contentText);
+                alert.showAndWait();
+            });
+        }
     }
 }

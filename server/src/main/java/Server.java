@@ -13,10 +13,10 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
 
 public class Server {
 
+
     private void run() throws Exception{
         final int maxObjectSize = 1024*1024*100;
         final int connectionPort = 8189;
-
 
         EventLoopGroup mainGroup = new NioEventLoopGroup();
         EventLoopGroup worketGroup = new NioEventLoopGroup();
