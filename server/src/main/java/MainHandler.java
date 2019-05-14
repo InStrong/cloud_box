@@ -86,10 +86,6 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void uploadFile(FileMessage fm) {
-        FileChooser fileChooser = new FileChooser(); //это я потом буду делать окно с сохранением
-        fileChooser.setInitialFileName(fm.getFilename());
-        FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("Any files", "*.*");
-        fileChooser.getExtensionFilters().add(extensionFilter);
         try {
             Files.write(Paths.get("server_storage/" + fm.getFilename()), fm.getData(), StandardOpenOption.CREATE);
         } catch (IOException e) {

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<GridPane fx:id="registration" alignment="CENTER" hgap="10" prefHeight="350.0" prefWidth="500.0" stylesheets="@Login.css"
+          vgap="10" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="MainController">
+    <VBox>
+        <ImageView fitWidth="210" fitHeight="100">
+            <VBox.margin>
+                <Insets bottom="10.0"/>
+            </VBox.margin>
+            <image>
+                <Image url="@logo.png"/>
+            </image>
+        </ImageView>
+        <TextField fx:id="loginRegistration" editable="true" promptText="Login">
+            <VBox.margin>
+                <Insets bottom="5.0"/>
+            </VBox.margin>
+        </TextField>
+        <PasswordField fx:id="passRegistration" promptText="Password">
+            <VBox.margin>
+                <Insets bottom="10.0"/>
+            </VBox.margin>
+        </PasswordField>
+        <TextField fx:id="emailRegistration" editable="true" promptText="e-mail">
+            <VBox.margin>
+                <Insets bottom="5.0"/>
+            </VBox.margin>
+        </TextField>
+        <VBox>
+            <children>
+                <Button fx:id="regBtn" text="Registration" maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#regAction" />
+            </children>
+        </VBox>
+    </VBox>
+</GridPane>

@@ -98,10 +98,6 @@ public class MainController extends Window implements Initializable {
     }
 
     private boolean saveFile(FileMessage fm) {
-        FileChooser fileChooser = new FileChooser(); //это я потом буду делать окно с сохранением
-        fileChooser.setInitialFileName(fm.getFilename());
-        FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("Any files", "*.*");
-        fileChooser.getExtensionFilters().add(extensionFilter);
         try {
             Files.write(Paths.get("local_storage/" + fm.getFilename()), fm.getData(), StandardOpenOption.CREATE);
             Alert alert = new Alert(Alert.AlertType.INFORMATION,"",ButtonType.OK);
