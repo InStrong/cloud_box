@@ -1,3 +1,4 @@
+
 import io.netty.handler.codec.serialization.ObjectDecoderInputStream;
 import io.netty.handler.codec.serialization.ObjectEncoderOutputStream;
 
@@ -12,11 +13,12 @@ public class Network {
     private static ObjectEncoderOutputStream out;
     private static ObjectDecoderInputStream in;
 
+
     static void start(){
         try {
             socket = new Socket(HOST,PORT);
             out = new ObjectEncoderOutputStream(socket.getOutputStream());
-            in = new ObjectDecoderInputStream(socket.getInputStream());
+            in = new ObjectDecoderInputStream(socket.getInputStream(),1024*1024*100);
         } catch (IOException e) {
             e.printStackTrace();
         }

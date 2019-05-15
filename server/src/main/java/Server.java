@@ -36,7 +36,6 @@ public class Server {
                             );
                         }
                     })
-                    .option(ChannelOption.SO_BACKLOG,128)
                     .childOption(ChannelOption.SO_KEEPALIVE,true);
                     ChannelFuture future = b.bind(connectionPort).sync();
                     future.channel().closeFuture().sync();
